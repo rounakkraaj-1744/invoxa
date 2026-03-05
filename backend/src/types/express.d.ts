@@ -1,10 +1,11 @@
-import { User } from '../db/schema';
+import { auth } from "../lib/auth";
 
 declare global {
     namespace Express {
         interface Request {
-            user?: User;
-            apiKey?: string;
+            user?: typeof auth.$Infer.Session.user;
+            session?: typeof auth.$Infer.Session.session;
+            businessId?: string;
         }
     }
 }

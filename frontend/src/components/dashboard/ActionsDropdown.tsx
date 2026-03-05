@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { MoreHorizontal, FileText, Send, Download, Trash2, Edit, CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -13,6 +14,7 @@ interface ActionsDropdownProps {
 export const ActionsDropdown = ({ invoiceId, onAction, align = "right" }: ActionsDropdownProps) => {
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const router = useRouter();
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -33,6 +35,16 @@ export const ActionsDropdown = ({ invoiceId, onAction, align = "right" }: Action
         { label: "Delete", icon: Trash2, value: "delete", className: "text-error" },
     ];
 
+    const handleAction = (value: string) => {
+        if (value === "view") {
+            router.push(`/dashboard/invoices/${invoiceId}`);
+        } else if (value === "edit") {
+            router.push(`/dashboard/invoices/new?id=${invoiceId}`); // Assuming edit uses the same builder
+        }
+        onAction?.(value);
+        setIsOpen(false);
+    };
+
     return (
         <div className="relative" ref={dropdownRef}>
             <button
@@ -52,10 +64,7 @@ export const ActionsDropdown = ({ invoiceId, onAction, align = "right" }: Action
                     {actions.map((action, i) => (
                         <button
                             key={i}
-                            onClick={() => {
-                                onAction?.(action.value);
-                                setIsOpen(false);
-                            }}
+                            onClick={() => handleAction(action.value)}
                             className={cn(
                                 "w-full flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-text-secondary hover:text-white hover:bg-white/5 transition-colors",
                                 action.className

@@ -1,4 +1,5 @@
 import { Search, Bell, Command } from "lucide-react";
+import Link from "next/link";
 
 export function DashboardHeader({ title }: { title: string }) {
     return (
@@ -29,9 +30,9 @@ export function DashboardHeader({ title }: { title: string }) {
 
                 <div className="h-8 w-px bg-border-default" />
 
-                <div className="flex items-center gap-3">
+                <Link href="/dashboard/settings" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
                     <div className="w-8 h-8 rounded-full bg-accent text-[10px] text-background flex items-center justify-center font-bold">RK</div>
-                </div>
+                </Link>
             </div>
         </header>
     );

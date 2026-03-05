@@ -1,6 +1,7 @@
 "use client";
 
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
+import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import {
@@ -179,14 +180,18 @@ export default function DashboardHome() {
                             <CardContent className="p-6 space-y-6">
                                 <h2 className="text-sm font-bold text-text-tertiary uppercase tracking-widest">Quick Actions</h2>
                                 <div className="space-y-3">
-                                    <Button className="w-full bg-accent text-black hover:bg-accent/90 h-12 justify-center gap-2 font-bold shadow-glow-sm">
-                                        <Plus size={18} />
-                                        <span>New Invoice</span>
-                                    </Button>
-                                    <Button variant="ghost" className="w-full h-12 justify-center gap-2 border-border-default text-text-secondary hover:text-white">
-                                        <UserPlus size={18} />
-                                        <span>Add Client</span>
-                                    </Button>
+                                    <Link href="/dashboard/invoices/new" className="w-full">
+                                        <Button className="w-full bg-accent text-black hover:bg-accent/90 h-12 justify-center gap-2 font-bold shadow-glow-sm">
+                                            <Plus size={18} />
+                                            <span>New Invoice</span>
+                                        </Button>
+                                    </Link>
+                                    <Link href="/dashboard/clients" className="w-full">
+                                        <Button variant="ghost" className="w-full h-12 justify-center gap-2 border-border-default text-text-secondary hover:text-white">
+                                            <UserPlus size={18} />
+                                            <span>Add Client</span>
+                                        </Button>
+                                    </Link>
                                     <Button variant="ghost" className="w-full h-12 justify-center gap-2 border-border-default text-text-secondary hover:text-white">
                                         <FileUp size={18} />
                                         <span>Import CSV</span>
@@ -224,7 +229,9 @@ export default function DashboardHome() {
                     <CardContent className="p-0">
                         <div className="p-6 flex items-center justify-between">
                             <h2 className="text-lg font-bold text-white">Recent Invoices</h2>
-                            <button className="cursor-pointer text-xs text-text-tertiary hover:text-white transition-colors">View All</button>
+                            <Link href="/dashboard/invoices">
+                                <button className="cursor-pointer text-xs text-text-tertiary hover:text-white transition-colors">View All</button>
+                            </Link>
                         </div>
                         <div className="overflow-x-auto">
                             <table className="w-full text-left border-collapse">

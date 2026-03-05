@@ -91,10 +91,12 @@ export function Sidebar() {
 
             <div className="p-4 border-t border-border-default space-y-4">
                 {!isCollapsed && (
-                    <Button variant="primary" className="w-full gap-2 py-5 shadow-glow">
-                        <Plus size={16} />
-                        <span>New Invoice</span>
-                    </Button>
+                    <Link href="/dashboard/invoices/new" className="w-full">
+                        <Button variant="primary" className="w-full gap-2 py-5 shadow-glow">
+                            <Plus size={16} />
+                            <span>New Invoice</span>
+                        </Button>
+                    </Link>
                 )}
                 <div className={cn("flex items-center gap-3 p-1 rounded-lg", !isCollapsed && "hover:bg-elevated transition-colors")}>
                     <div className="w-10 h-10 rounded-full bg-accent/20 border border-accent/20 flex items-center justify-center text-accent font-bold">

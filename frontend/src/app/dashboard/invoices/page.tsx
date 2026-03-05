@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
+import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import {
@@ -39,10 +40,12 @@ export default function InvoicesPage() {
                             <Download size={14} />
                             Export CSV
                         </Button>
-                        <Button className="bg-accent text-black hover:bg-accent/90 gap-2 h-11 px-6 shadow-glow font-bold text-xs uppercase tracking-widest">
-                            <Plus size={18} />
-                            New Invoice
-                        </Button>
+                        <Link href="/dashboard/invoices/new">
+                            <Button className="bg-accent text-black hover:bg-accent/90 gap-2 h-11 px-6 shadow-glow font-bold text-xs uppercase tracking-widest">
+                                <Plus size={18} />
+                                New Invoice
+                            </Button>
+                        </Link>
                     </div>
                 </div>
 
