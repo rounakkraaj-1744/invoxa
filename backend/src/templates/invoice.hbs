@@ -1,11 +1,404 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Invoice</title>
+    <meta charset="UTF-8" />
+    <title>Invoice #{{invoice.number}}</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-size: 13px;
+            color: #1a1a1a;
+            background: #fff;
+            padding: 48px;
+        }
+
+        /* ── Header ── */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 48px;
+        }
+
+        .logo img {
+            height: 48px;
+            object-fit: contain;
+        }
+
+        .logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0a0a0b;
+        }
+
+        .invoice-meta {
+            text-align: right;
+        }
+
+        .invoice-meta h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #0a0a0b;
+            margin-bottom: 4px;
+        }
+
+        .invoice-meta .invoice-number {
+            font-size: 14px;
+            color: #71717a;
+            margin-bottom: 8px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .status-PAID     { background: #d1fae5; color: #065f46; }
+        .status-SENT     { background: #e0e7ff; color: #3730a3; }
+        .status-DRAFT    { background: #f4f4f5; color: #52525b; }
+        .status-OVERDUE  { background: #fee2e2; color: #991b1b; }
+        .status-CANCELLED{ background: #f4f4f5; color: #52525b; }
+
+        /* ── Parties ── */
+        .parties {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            gap: 32px;
+        }
+
+        .party {
+            flex: 1;
+        }
+
+        .party-label {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #71717a;
+            margin-bottom: 8px;
+        }
+
+        .party-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: #0a0a0b;
+            margin-bottom: 4px;
+        }
+
+        .party p {
+            color: #52525b;
+            line-height: 1.6;
+            font-size: 12px;
+        }
+
+        /* ── Dates Row ── */
+        .dates-row {
+            display: flex;
+            gap: 32px;
+            background: #f9f9f9;
+            border: 1px solid #e4e4e7;
+            border-radius: 6px;
+            padding: 16px 24px;
+            margin-bottom: 32px;
+        }
+
+        .date-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .date-label {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #71717a;
+        }
+
+        .date-value {
+            font-size: 13px;
+            font-weight: 500;
+            color: #0a0a0b;
+        }
+
+        /* ── Line Items Table ── */
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 24px;
+        }
+
+        .items-table thead tr {
+            background: #0a0a0b;
+            color: #fff;
+        }
+
+        .items-table thead th {
+            padding: 10px 12px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            text-align: left;
+        }
+
+        .items-table thead th:last-child,
+        .items-table thead th.align-right {
+            text-align: right;
+        }
+
+        .items-table tbody tr {
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .items-table tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        .items-table tbody td {
+            padding: 12px;
+            color: #1a1a1a;
+            vertical-align: top;
+        }
+
+        .items-table tbody td.align-right {
+            text-align: right;
+        }
+
+        .item-description {
+            font-weight: 500;
+        }
+
+        .item-tax {
+            font-size: 11px;
+            color: #71717a;
+            margin-top: 2px;
+        }
+
+        /* ── Totals ── */
+        .totals-wrapper {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 40px;
+        }
+
+        .totals {
+            width: 280px;
+        }
+
+        .totals-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            font-size: 13px;
+            color: #52525b;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .totals-row:last-child {
+            border-bottom: none;
+        }
+
+        .totals-row.discount .value {
+            color: #10b981;
+        }
+
+        .totals-row.total {
+            padding: 12px 0 0;
+            font-size: 16px;
+            font-weight: 700;
+            color: #0a0a0b;
+            border-top: 2px solid #0a0a0b;
+            border-bottom: none;
+            margin-top: 4px;
+        }
+
+        /* ── Notes & Terms ── */
+        .footer-sections {
+            display: flex;
+            gap: 32px;
+            margin-bottom: 48px;
+        }
+
+        .footer-section {
+            flex: 1;
+        }
+
+        .footer-section-label {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #71717a;
+            margin-bottom: 6px;
+        }
+
+        .footer-section p {
+            font-size: 12px;
+            color: #52525b;
+            line-height: 1.6;
+        }
+
+        /* ── Page Footer ── */
+        .page-footer {
+            border-top: 1px solid #e4e4e7;
+            padding-top: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #a1a1aa;
+            font-size: 11px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Invoice #{{invoiceNumber}}</h1>
-    <p>Due Date: {{dueDate}}</p>
-    <!-- Add more fields as needed -->
+
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">
+            {{#if business.logoUrl}}
+                <img src="{{business.logoUrl}}" alt="{{business.name}}" />
+            {{else}}
+                <div class="logo-text">{{business.name}}</div>
+            {{/if}}
+        </div>
+        <div class="invoice-meta">
+            <h1>Invoice</h1>
+            <div class="invoice-number">#{{invoice.number}}</div>
+            <span class="status-badge status-{{invoice.status}}">{{invoice.status}}</span>
+        </div>
+    </div>
+
+    <!-- From / Bill To -->
+    <div class="parties">
+        <div class="party">
+            <div class="party-label">From</div>
+            <div class="party-name">{{business.name}}</div>
+            <p>{{business.email}}</p>
+            {{#if business.phone}}<p>{{business.phone}}</p>{{/if}}
+            {{#if business.address}}<p>{{business.address}}</p>{{/if}}
+            {{#if business.taxId}}<p>Tax ID: {{business.taxId}}</p>{{/if}}
+        </div>
+        <div class="party">
+            <div class="party-label">Bill To</div>
+            <div class="party-name">{{client.name}}</div>
+            {{#if client.company}}<p>{{client.company}}</p>{{/if}}
+            <p>{{client.email}}</p>
+            {{#if client.phone}}<p>{{client.phone}}</p>{{/if}}
+            {{#if client.address}}<p>{{client.address}}</p>{{/if}}
+            {{#if client.taxId}}<p>Tax ID: {{client.taxId}}</p>{{/if}}
+        </div>
+    </div>
+
+    <!-- Dates -->
+    <div class="dates-row">
+        <div class="date-item">
+            <span class="date-label">Issue Date</span>
+            <span class="date-value">{{invoice.createdAt}}</span>
+        </div>
+        <div class="date-item">
+            <span class="date-label">Due Date</span>
+            <span class="date-value">{{invoice.dueDate}}</span>
+        </div>
+        <div class="date-item">
+            <span class="date-label">Currency</span>
+            <span class="date-value">{{invoice.currency}}</span>
+        </div>
+        {{#if invoice.terms}}
+        <div class="date-item">
+            <span class="date-label">Terms</span>
+            <span class="date-value">{{invoice.terms}}</span>
+        </div>
+        {{/if}}
+    </div>
+
+    <!-- Line Items -->
+    <table class="items-table">
+        <thead>
+            <tr>
+                <th style="width: 40%">Description</th>
+                <th class="align-right">Qty</th>
+                <th class="align-right">Unit Price</th>
+                <th class="align-right">Tax</th>
+                <th class="align-right">Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each invoice.items}}
+            <tr>
+                <td>
+                    <div class="item-description">{{this.description}}</div>
+                    {{#if this.taxPercent}}
+                        <div class="item-tax">Tax: {{this.taxPercent}}%</div>
+                    {{/if}}
+                </td>
+                <td class="align-right">{{this.quantity}}</td>
+                <td class="align-right">{{this.unitPrice}}</td>
+                <td class="align-right">
+                    {{#if this.taxPercent}}{{this.taxPercent}}%{{else}}—{{/if}}
+                </td>
+                <td class="align-right">{{this.amount}}</td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+
+    <!-- Totals -->
+    <div class="totals-wrapper">
+        <div class="totals">
+            <div class="totals-row">
+                <span>Subtotal</span>
+                <span class="value">{{invoice.currency}} {{invoice.subtotal}}</span>
+            </div>
+            {{#if invoice.taxAmount}}
+            <div class="totals-row">
+                <span>Tax</span>
+                <span class="value">{{invoice.currency}} {{invoice.taxAmount}}</span>
+            </div>
+            {{/if}}
+            {{#if invoice.discount}}
+            <div class="totals-row discount">
+                <span>Discount</span>
+                <span class="value">− {{invoice.currency}} {{invoice.discount}}</span>
+            </div>
+            {{/if}}
+            <div class="totals-row total">
+                <span>Total</span>
+                <span>{{invoice.currency}} {{invoice.total}}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notes & Terms -->
+    {{#if invoice.notes}}
+    <div class="footer-sections">
+        <div class="footer-section">
+            <div class="footer-section-label">Notes</div>
+            <p>{{invoice.notes}}</p>
+        </div>
+        {{#if invoice.terms}}
+        <div class="footer-section">
+            <div class="footer-section-label">Payment Terms</div>
+            <p>{{invoice.terms}}</p>
+        </div>
+        {{/if}}
+    </div>
+    {{/if}}
+
+    <div class="page-footer">
+        <span>{{business.name}} · {{business.email}}</span>
+        <span>Generated by Invoxa</span>
+    </div>
+
 </body>
 </html>
