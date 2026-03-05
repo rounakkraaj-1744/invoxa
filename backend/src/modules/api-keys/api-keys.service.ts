@@ -1,5 +1,6 @@
 import { prisma } from "../../config/db"
 import { generateApiKey, hashApiKey, getKeyPrefix } from "../../lib/apiKey"
+
 export const createApiKey = async (businessId: string, name: string) => {
     const rawKey = generateApiKey()
     const keyHash = hashApiKey(rawKey)
