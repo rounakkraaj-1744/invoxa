@@ -367,131 +367,148 @@ function InvoiceBuilderContent() {
                 </div>
 
                 {/* Right Pane - Preview */}
-                <div className="w-1/2 bg-elevated/10 p-12 overflow-y-auto custom-scrollbar flex justify-center items-start shadow-inner relative">
-                    {/* Decorative Background Elements */}
-                    <div className="absolute top-0 right-0 w-96 h-96 bg-accent/5 blur-[150px] rounded-full pointer-events-none" />
-                    <div className="absolute bottom-0 left-0 w-96 h-96 bg-accent/5 blur-[150px] rounded-full pointer-events-none" />
+                <div className="w-1/2 bg-elevated/5 p-12 overflow-y-auto custom-scrollbar flex justify-center items-start shadow-inner relative">
+                    <div className="w-full max-w-[800px] bg-white shadow-[0_40px_100px_rgba(0,0,0,0.4)] rounded-sm p-14 text-slate-800 flex flex-col aspect-[1/1.414] animate-in fade-in zoom-in-98 duration-700 relative overflow-hidden">
 
-                    <div className="w-full max-w-[700px] bg-white shadow-[0_40px_100px_rgba(0,0,0,0.6)] rounded-sm p-14 text-slate-800 flex flex-col aspect-[1/1.414] animate-in fade-in zoom-in-98 duration-1000 relative overflow-hidden group">
-                        {/* Shimmer Effect */}
-                        <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-accent/20 to-transparent" />
-
-                        <div className="flex justify-between items-start mb-20 relative z-10">
-                            <div>
-                                <div className="w-16 h-16 bg-slate-900 rounded-2xl mb-6 shadow-2xl flex items-center justify-center text-white font-black text-3xl uppercase italic transform active:scale-95 transition-transform">
-                                    {activeBusiness?.name?.substring(0, 1) || "I"}
-                                </div>
-                                <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest mb-1.5">Origin</p>
-                                <h3 className="text-2xl font-black text-slate-900 tracking-tighter leading-none uppercase italic">{activeBusiness?.name || "Your Business"}</h3>
-                                <p className="text-[10px] text-slate-400 font-bold mt-1 uppercase tracking-widest">Verified Merchant</p>
+                        {/* Header */}
+                        <div className="flex justify-between items-start mb-12">
+                            <div className="logo">
+                                {activeBusiness?.logoUrl ? (
+                                    <img src={activeBusiness.logoUrl} alt={activeBusiness.name} className="h-12 object-contain" />
+                                ) : (
+                                    <div className="text-2xl font-bold text-slate-900 leading-none">{activeBusiness?.name || "Your Business"}</div>
+                                )}
+                                <p className="text-[10px] text-slate-400 font-bold mt-2 uppercase tracking-widest leading-none">Verified Merchant</p>
                             </div>
                             <div className="text-right">
-                                <h2 className="text-6xl font-black text-slate-900 tracking-tighter uppercase italic leading-none mb-3">Invoice</h2>
-                                <div className="inline-flex border-b-8 border-slate-900 pb-1">
-                                    <p className="text-base font-mono font-black text-slate-300">#</p>
-                                    <p className="text-base font-mono font-black text-slate-900 ml-1">{invoiceId ? 'REF-' + invoiceId.substring(0, 4).toUpperCase() : 'DRAFT_GEN'}</p>
+                                <h1 className="text-3xl font-bold text-slate-900 uppercase tracking-tighter mb-1">Invoice</h1>
+                                <div className="text-sm font-medium text-slate-400">#{invoiceId ? 'REF-' + invoiceId.substring(0, 4).toUpperCase() : 'DRAFT_GEN'}</div>
+                                <div className="mt-2">
+                                    <span className="inline-block px-3 py-1 bg-slate-100 text-slate-500 rounded text-[10px] font-bold uppercase tracking-widest">
+                                        {invoiceId ? 'Pending' : 'Draft'}
+                                    </span>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-16 border-y-4 border-slate-50 py-12 mb-12 relative z-10">
-                            <div className="min-h-[100px]">
-                                <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest mb-6">Billed Recipient</p>
-                                <AnimatePresence mode="wait">
-                                    {selectedClient ? (
-                                        <motion.div
-                                            key={selectedClient.id}
-                                            initial={{ opacity: 0, x: -10 }}
-                                            animate={{ opacity: 1, x: 0 }}
-                                            exit={{ opacity: 0, x: 10 }}
-                                        >
-                                            <p className="text-xl font-black text-slate-900 leading-tight uppercase italic">{selectedClient.name}</p>
-                                            <p className="text-xs text-slate-500 font-bold mt-1.5">{selectedClient.email}</p>
-                                            {selectedClient.company && (
-                                                <p className="text-[10px] text-slate-400 mt-4 uppercase font-black tracking-[0.2em] leading-none bg-slate-50 inline-block px-3 py-1.5 rounded-full border border-slate-100">
-                                                    {selectedClient.company}
-                                                </p>
-                                            )}
-                                        </motion.div>
-                                    ) : (
-                                        <div className="space-y-3">
-                                            <div className="h-5 w-3/4 bg-slate-50 rounded animate-pulse" />
-                                            <div className="h-3 w-1/2 bg-slate-50/50 rounded animate-pulse" />
+                        {/* Parties */}
+                        <div className="flex gap-8 mb-10 text-xs">
+                            <div className="flex-1">
+                                <div className="text-[10px] font-bold text-slate-300 uppercase tracking-widest mb-2">From</div>
+                                <div className="font-bold text-slate-900 text-sm mb-1">{activeBusiness?.name || "Your Business"}</div>
+                                <div className="text-slate-500 space-y-0.5 font-medium">
+                                    <p>{activeBusiness?.email}</p>
+                                    {activeBusiness?.phone && <p>{activeBusiness.phone}</p>}
+                                    {activeBusiness?.address && <p>{activeBusiness.address}</p>}
+                                </div>
+                            </div>
+                            <div className="flex-1">
+                                <div className="text-[10px] font-bold text-slate-300 uppercase tracking-widest mb-2">Bill To</div>
+                                {selectedClient ? (
+                                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                                        <div className="font-bold text-slate-900 text-sm mb-1">{selectedClient.name}</div>
+                                        <div className="text-slate-500 space-y-0.5 font-medium">
+                                            {selectedClient.company && <p>{selectedClient.company}</p>}
+                                            <p>{selectedClient.email}</p>
                                         </div>
-                                    )}
-                                </AnimatePresence>
-                            </div>
-                            <div className="text-right flex flex-col justify-between items-end">
-                                <div className="grid grid-cols-2 gap-x-12 gap-y-8 w-full max-w-[240px]">
-                                    <div className="text-right">
-                                        <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest mb-2">Issue Date</p>
-                                        <p className="text-xs font-black text-slate-900">{new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
+                                    </motion.div>
+                                ) : (
+                                    <div className="space-y-2 opacity-20">
+                                        <div className="h-4 w-3/4 bg-slate-200 rounded" />
+                                        <div className="h-3 w-1/2 bg-slate-200 rounded" />
                                     </div>
-                                    <div className="text-right">
-                                        <p className="text-[10px] font-black text-slate-300 uppercase tracking-widest mb-2">Due Date</p>
-                                        <p className="text-xs font-black text-slate-900">{new Date(invoice.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
-                                    </div>
-                                </div>
+                                )}
                             </div>
                         </div>
 
-                        <div className="flex-1 relative z-10">
+                        {/* Dates Row */}
+                        <div className="flex gap-8 bg-slate-50/50 border border-slate-100 rounded-lg p-5 mb-10">
+                            <div className="flex flex-col gap-1">
+                                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Issue Date</span>
+                                <span className="text-xs font-bold text-slate-900">{new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                            </div>
+                            <div className="flex flex-col gap-1">
+                                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Due Date</span>
+                                <span className="text-xs font-bold text-slate-900">{new Date(invoice.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                            </div>
+                            <div className="flex flex-col gap-1">
+                                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Currency</span>
+                                <span className="text-xs font-bold text-slate-900">{invoice.currency}</span>
+                            </div>
+                        </div>
+
+                        {/* Line Items */}
+                        <div className="flex-1">
                             <table className="w-full">
                                 <thead>
-                                    <tr className="border-b-4 border-slate-900">
-                                        <th className="py-6 text-left text-[10px] font-black text-slate-300 uppercase tracking-widest">Descriptor</th>
-                                        <th className="py-6 text-center text-[10px] font-black text-slate-300 uppercase tracking-widest">Qty</th>
-                                        <th className="py-6 text-right text-[10px] font-black text-slate-300 uppercase tracking-widest">Rate</th>
-                                        <th className="py-6 text-right text-[10px] font-black text-slate-300 uppercase tracking-widest">Amount</th>
+                                    <tr className="bg-slate-900 text-white">
+                                        <th className="py-2.5 px-4 text-left text-[9px] font-bold uppercase tracking-widest rounded-l-md">Description</th>
+                                        <th className="py-2.5 px-4 text-center text-[9px] font-bold uppercase tracking-widest">Qty</th>
+                                        <th className="py-2.5 px-4 text-right text-[9px] font-bold uppercase tracking-widest">Price</th>
+                                        <th className="py-2.5 px-4 text-right text-[9px] font-bold uppercase tracking-widest rounded-r-md">Amount</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-slate-50">
+                                <tbody className="divide-y divide-slate-100">
                                     {invoice.items.map((item) => (
-                                        <tr key={item.id} className="group/row hover:bg-slate-50/30 transition-colors">
-                                            <td className="py-7 pr-8">
-                                                <p className="text-sm font-black text-slate-900 leading-snug uppercase tracking-tight">{item.description || "Unspecified Service"}</p>
+                                        <tr key={item.id}>
+                                            <td className="py-5 px-4">
+                                                <p className="text-xs font-bold text-slate-900 leading-snug">{item.description || "Unspecified Service"}</p>
                                             </td>
-                                            <td className="py-7 text-center text-xs font-mono font-black text-slate-400">{item.quantity}</td>
-                                            <td className="py-7 text-right text-xs font-mono font-black text-slate-400">{formatCurrency(item.unitPrice)}</td>
-                                            <td className="py-7 text-right text-sm font-black text-slate-900 font-mono tracking-tighter">{formatCurrency(item.quantity * item.unitPrice)}</td>
+                                            <td className="py-5 px-4 text-center text-xs font-mono font-medium text-slate-500">{item.quantity}</td>
+                                            <td className="py-5 px-4 text-right text-xs font-mono font-medium text-slate-500">{formatCurrency(item.unitPrice)}</td>
+                                            <td className="py-5 px-4 text-right text-xs font-bold text-slate-900 font-mono">{formatCurrency(item.quantity * item.unitPrice)}</td>
                                         </tr>
                                     ))}
                                 </tbody>
                             </table>
                         </div>
 
-                        <div className="mt-auto pt-14 border-t-[12px] border-slate-900 flex justify-between items-end relative z-10">
-                            <div className="max-w-[280px] text-[10px] text-slate-400 space-y-5">
-                                {invoice.notes && (
-                                    <div>
-                                        <p className="font-black text-slate-300 uppercase tracking-[0.2em] mb-2 leading-none">Internal Directives</p>
-                                        <p className="leading-relaxed font-bold italic text-slate-400/80">{invoice.notes}</p>
-                                    </div>
-                                )}
-                            </div>
-                            <div className="w-72 space-y-4">
-                                <div className="flex justify-between text-xs font-black text-slate-300 uppercase tracking-widest">
-                                    <span>Subtotal</span>
+                        {/* Totals */}
+                        <div className="mt-8 flex justify-end">
+                            <div className="w-64 space-y-2 text-xs">
+                                <div className="flex justify-between font-medium text-slate-400">
+                                    <span className="uppercase tracking-widest text-[9px]">Subtotal</span>
                                     <span className="text-slate-900 font-mono">{formatCurrency(subtotal)}</span>
                                 </div>
-                                <div className="flex justify-between text-xs font-black text-slate-300 uppercase tracking-widest">
-                                    <div className="flex items-center gap-2">
-                                        <span>Tax (Vat)</span>
-                                        <span className="text-[9px] px-2 py-0.5 rounded-full bg-slate-900 text-white font-black">10%</span>
-                                    </div>
+                                <div className="flex justify-between font-medium text-slate-400">
+                                    <span className="uppercase tracking-widest text-[9px]">Tax (10%)</span>
                                     <span className="text-slate-900 font-mono">{formatCurrency(taxAmount)}</span>
                                 </div>
                                 {invoice.discount > 0 && (
-                                    <div className="flex justify-between text-xs font-black text-red-500 uppercase tracking-widest group">
-                                        <span>Discount</span>
+                                    <div className="flex justify-between font-bold text-green-500">
+                                        <span className="uppercase tracking-widest text-[9px]">Discount</span>
                                         <span className="font-mono">-{formatCurrency(invoice.discount)}</span>
                                     </div>
                                 )}
-                                <div className="flex justify-between items-end pt-8 border-t-2 border-slate-100">
-                                    <span className="text-xs font-black uppercase text-slate-900 tracking-tighter leading-none mb-1">Total Net Due</span>
-                                    <span className="text-5xl font-black font-mono text-slate-900 tracking-tighter leading-none">{formatCurrency(total)}</span>
+                                <div className="flex justify-between items-end pt-4 border-t-2 border-slate-900">
+                                    <span className="text-[10px] font-bold uppercase text-slate-900 tracking-tighter leading-none mb-1">Total Due</span>
+                                    <span className="text-3xl font-bold font-mono text-slate-900 tracking-tighter leading-none">{formatCurrency(total)}</span>
                                 </div>
                             </div>
+                        </div>
+
+                        {/* Footer Notes */}
+                        {(invoice.notes || invoice.terms) && (
+                            <div className="mt-12 flex gap-8 border-t border-slate-100 pt-8">
+                                {invoice.notes && (
+                                    <div className="flex-1">
+                                        <p className="text-[9px] font-bold text-slate-300 uppercase tracking-widest mb-1.5 leading-none">Notes</p>
+                                        <p className="text-[11px] leading-relaxed text-slate-500 font-medium italic">{invoice.notes}</p>
+                                    </div>
+                                )}
+                                {invoice.terms && (
+                                    <div className="flex-1">
+                                        <p className="text-[9px] font-bold text-slate-300 uppercase tracking-widest mb-1.5 leading-none">Terms</p>
+                                        <p className="text-[11px] leading-relaxed text-slate-500 font-medium italic">{invoice.terms}</p>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {/* Bottom Footer */}
+                        <div className="mt-12 pt-6 border-t border-slate-100 flex justify-between items-center text-[9px] font-bold text-slate-400 uppercase tracking-widest">
+                            <span>{activeBusiness?.name} · {activeBusiness?.email}</span>
+                            <span>Generated by Invoxa</span>
                         </div>
                     </div>
                 </div>
