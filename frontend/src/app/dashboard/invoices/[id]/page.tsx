@@ -109,10 +109,44 @@ export default function InvoiceDetail({ params }: { params: Promise<{ id: string
 
     if (isLoading) {
         return (
-            <div className="flex items-center justify-center min-h-[calc(100vh-64px)] bg-background">
-                <div className="flex flex-col items-center gap-4">
-                    <Loader2 className="w-10 h-10 animate-spin text-accent" />
-                    <p className="text-sm text-text-tertiary font-bold uppercase tracking-widest">Loading invoice data...</p>
+            <div className="flex flex-col min-h-[calc(100vh-64px)] bg-background animate-pulse">
+                {/* Skeleton Header */}
+                <div className="h-24 bg-surface/30 border-b border-border-default/50 flex items-center px-8">
+                    <div className="max-w-7xl mx-auto w-full flex justify-between items-center">
+                        <div className="flex items-center gap-6">
+                            <div className="h-11 w-11 rounded-full bg-surface/50" />
+                            <div className="space-y-2">
+                                <div className="h-6 w-32 bg-surface/50 rounded" />
+                                <div className="h-3 w-48 bg-surface/30 rounded" />
+                            </div>
+                        </div>
+                        <div className="flex gap-3">
+                            <div className="h-11 w-32 bg-surface/50 rounded-lg" />
+                            <div className="h-11 w-40 bg-surface/50 rounded-lg" />
+                        </div>
+                    </div>
+                </div>
+
+                {/* Skeleton Main Content */}
+                <div className="flex-1 p-8 lg:p-12">
+                    <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-12">
+                        <div className="lg:col-span-2">
+                            <div className="aspect-[1/1.4] bg-surface/20 rounded-2xl border border-border-default shadow-2xl" />
+                        </div>
+                        <div className="space-y-10">
+                            <div className="space-y-4">
+                                <div className="h-4 w-24 bg-surface/40 rounded" />
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="h-20 bg-surface/30 rounded-xl" />
+                                    <div className="h-20 bg-surface/30 rounded-xl" />
+                                </div>
+                            </div>
+                            <div className="space-y-4">
+                                <div className="h-4 w-32 bg-surface/40 rounded" />
+                                <div className="h-48 bg-surface/30 rounded-2xl" />
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         );

@@ -133,9 +133,7 @@ function InvoiceBuilderContent() {
             }
 
             setStatus('success');
-            setTimeout(() => {
-                router.push("/dashboard/invoices");
-            }, 1500);
+            router.push("/dashboard/invoices");
         } catch (error: any) {
             console.error("Failed to save invoice:", error);
             setStatus('error');

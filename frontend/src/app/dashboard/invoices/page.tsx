@@ -63,10 +63,14 @@ export default function InvoicesPage() {
     };
 
     useEffect(() => {
-        const timer = setTimeout(() => {
-            fetchInvoices();
-        }, 300);
-        return () => clearTimeout(timer);
+        if (activeBusiness) {
+            if (searchQuery) {
+                const timer = setTimeout(fetchInvoices, 400);
+                return () => clearTimeout(timer);
+            } else {
+                fetchInvoices();
+            }
+        }
     }, [activeBusiness, activeFilter, searchQuery]);
 
     const formatCurrency = (amount: number, currency: string) => {
@@ -152,14 +156,30 @@ export default function InvoicesPage() {
                             </thead>
                             <tbody className="divide-y divide-border-default/50">
                                 {isBusinessLoading || isLoading ? (
-                                    <tr>
-                                        <td colSpan={6} className="px-6 py-20 text-center">
-                                            <div className="flex flex-col items-center gap-3">
-                                                <Loader2 className="w-8 h-8 animate-spin text-accent" />
-                                                <p className="text-sm text-text-tertiary font-medium">{isBusinessLoading ? 'Syncing workspace...' : 'Loading invoices...'}</p>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                    [...Array(5)].map((_, i) => (
+                                        <tr key={i} className="animate-pulse">
+                                            <td className="px-6 py-5">
+                                                <div className="h-4 w-20 bg-surface/50 rounded mb-2" />
+                                                <div className="h-2 w-12 bg-surface/30 rounded" />
+                                            </td>
+                                            <td className="px-8 py-5">
+                                                <div className="h-4 w-32 bg-surface/50 rounded mb-2" />
+                                                <div className="h-2 w-24 bg-surface/30 rounded" />
+                                            </td>
+                                            <td className="px-8 py-5">
+                                                <div className="h-4 w-16 bg-surface/50 rounded" />
+                                            </td>
+                                            <td className="px-8 py-5">
+                                                <div className="h-4 w-24 bg-surface/50 rounded" />
+                                            </td>
+                                            <td className="px-8 py-5">
+                                                <div className="h-6 w-20 bg-surface/50 rounded-full" />
+                                            </td>
+                                            <td className="px-8 py-5 text-right">
+                                                <div className="h-8 w-8 bg-surface/50 rounded-lg ml-auto" />
+                                            </td>
+                                        </tr>
+                                    ))
                                 ) : !activeBusiness ? (
                                     <tr>
                                         <td colSpan={6} className="px-6 py-20 text-center">
