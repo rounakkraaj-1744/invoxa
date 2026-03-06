@@ -11,6 +11,7 @@ import clientRoutes from './modules/clients/clients.routes'
 import paymentRoutes from './modules/payments/payments.routes'
 import apiKeyRoutes from './modules/api-keys/api-keys.routes'
 import analyticsRoutes from './modules/analytics/analytics.routes'
+import businessRoutes from './modules/business/business.routes'
 import webhookRoutes from './modules/webhooks/webhooks.routes'
 
 const app = express()
@@ -31,6 +32,7 @@ app.use('/v1/clients', clientRoutes)
 app.use('/v1/payments', paymentRoutes)
 app.use('/v1/api-keys', apiKeyRoutes)
 app.use('/v1/analytics', analyticsRoutes)
+app.use('/v1/business', businessRoutes)
 app.use('/webhooks', webhookRoutes)
 
 // Health check
