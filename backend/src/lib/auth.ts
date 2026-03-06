@@ -16,5 +16,11 @@ export const auth = betterAuth({
             clientId: process.env.GOOGLE_CLIENT_ID!,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
         }
+    },
+    advanced: {
+        crossDomain: {
+            enabled: true,
+            allowedOrigins: [process.env.FRONTEND_URL || "http://localhost:3000"]
+        }
     }
 })
