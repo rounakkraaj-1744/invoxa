@@ -16,6 +16,8 @@ const envSchema = z.object({
   STRIPE_WEBHOOK_SECRET: z.string(),
   RAZORPAY_KEY_ID: z.string(),
   RAZORPAY_KEY_SECRET: z.string(),
+  GOOGLE_CLIENT_ID: z.string(),
+  GOOGLE_CLIENT_SECRET: z.string(),
   SENTRY_DSN: z.string().optional(),
 })
 
