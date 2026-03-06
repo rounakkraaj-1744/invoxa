@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
+import { authClient } from "@/lib/auth-client";
 
 const navItems = [
     { name: "Dashboard", icon: Home, href: "/dashboard" },
@@ -35,6 +36,7 @@ import { BusinessSwitcher } from "./BusinessSwitcher";
 export function Sidebar() {
     const pathname = usePathname();
     const [isCollapsed, setIsCollapsed] = useState(false);
+    const { data: session } = authClient.useSession();
 
     return (
         <aside
@@ -60,7 +62,7 @@ export function Sidebar() {
 
             <BusinessSwitcher isCollapsed={isCollapsed} />
 
-            <div className="flex-1 px-3 space-y-1">
+            <div className="flex-1 px-3 space-y-1 overflow-y-auto">
                 {navItems.map((item) => {
                     const isActive = pathname === item.href;
                     return (
@@ -101,14 +103,22 @@ export function Sidebar() {
                     </Link>
                 )}
                 <div className={cn("flex items-center gap-3 p-1 rounded-lg", !isCollapsed && "hover:bg-elevated transition-colors")}>
-                    <div className="w-10 h-10 rounded-full bg-accent/20 border border-accent/20 flex items-center justify-center text-accent font-bold">
-                        RK
-                    </div>
+                    {session?.user?.image ? (
+                        <img
+                            src={session.user.image}
+                            alt={session.user.name ?? ""}
+                            className="w-10 h-10 rounded-full border border-accent/20 object-cover"
+                        />
+                    ) : (
+                        <div className="w-10 h-10 rounded-full bg-accent/20 border border-accent/20 flex items-center justify-center text-accent font-bold">
+                            {session?.user?.name?.[0] || "U"}
+                        </div>
+                    )}
                     {!isCollapsed && (
                         <div className="flex-1 overflow-hidden">
-                            <p className="text-sm font-bold truncate">Rounak K.</p>
+                            <p className="text-sm font-bold truncate text-white">{session?.user?.name || "User"}</p>
                             <div className="flex items-center gap-1.5">
-                                <div className="w-2 h-2 rounded-full bg-accent" />
+                                <div className="w-2 h-2 rounded-full bg-accent shadow-[0_0_8px_rgba(245,158,11,0.5)]" />
                                 <p className="text-[10px] text-accent uppercase font-bold tracking-wider">Pro Plan</p>
                             </div>
                         </div>

@@ -42,9 +42,17 @@ export function DashboardHeader({ title }: { title: string }) {
                 <div className="h-8 w-px bg-border-default" />
 
                 <Link href="/dashboard/settings" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-                    <div className="w-9 h-9 rounded-full bg-accent text-xs text-background flex items-center justify-center font-black uppercase">
-                        {session?.user?.name?.[0] || "U"}
-                    </div>
+                    {session?.user?.image ? (
+                        <img
+                            src={session.user.image}
+                            alt={session.user.name ?? ""}
+                            className="w-9 h-9 rounded-full border border-border-default object-cover"
+                        />
+                    ) : (
+                        <div className="w-9 h-9 rounded-full bg-accent text-xs text-background flex items-center justify-center font-black uppercase">
+                            {session?.user?.name?.[0] || "U"}
+                        </div>
+                    )}
                 </Link>
 
                 <button

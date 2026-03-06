@@ -5,9 +5,11 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
-import { User, Building, Palette, CreditCard, Bell, Shield, LogOut } from "lucide-react";
-import { useState } from "react";
+import { User, Building, Palette, CreditCard, Bell, Shield, LogOut, Loader2 } from "lucide-react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
+import { authClient } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
 
 const tabs = [
     { id: "profile", label: "Profile", icon: User },
@@ -20,6 +22,23 @@ const tabs = [
 
 export default function Settings() {
     const [activeTab, setActiveTab] = useState("profile");
+    const { data: session, isPending } = authClient.useSession();
+    const router = useRouter();
+
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+
+    useEffect(() => {
+        if (session?.user) {
+            setName(session.user.name || "");
+            setEmail(session.user.email || "");
+        }
+    }, [session]);
+
+    const handleSignOut = async () => {
+        await authClient.signOut();
+        router.push("/login");
+    };
 
     return (
         <div className="flex flex-col min-h-screen bg-background text-foreground">
@@ -46,7 +65,10 @@ export default function Settings() {
                         ))}
 
                         <div className="pt-8 mt-8 border-t border-border-default">
-                            <button className="w-full flex items-center gap-3 px-4 py-3 rounded-md text-sm font-medium text-error hover:bg-error/10 transition-all">
+                            <button
+                                onClick={handleSignOut}
+                                className="w-full flex items-center gap-3 px-4 py-3 rounded-md text-sm font-medium text-error hover:bg-error/10 transition-all text-left"
+                            >
                                 <LogOut size={18} />
                                 <span>Sign Out</span>
                             </button>
@@ -55,7 +77,11 @@ export default function Settings() {
 
                     {/* Tab Content */}
                     <div className="flex-1 space-y-8">
-                        {activeTab === 'profile' && (
+                        {isPending ? (
+                            <div className="h-48 flex items-center justify-center">
+                                <Loader2 className="w-8 h-8 animate-spin text-accent" />
+                            </div>
+                        ) : activeTab === 'profile' && (
                             <section className="space-y-6">
                                 <div>
                                     <h2 className="text-xl font-bold">Profile Settings</h2>
@@ -65,27 +91,49 @@ export default function Settings() {
                                 <Card className="bg-surface/30">
                                     <CardContent className="p-8 space-y-6">
                                         <div className="flex items-center gap-6 pb-6 border-b border-border-default">
-                                            <div className="w-20 h-20 rounded-full bg-accent/20 border-2 border-accent/40 flex items-center justify-center text-2xl font-bold text-accent">RK</div>
+                                            {session?.user?.image ? (
+                                                <img
+                                                    src={session.user.image}
+                                                    alt={session.user.name ?? ""}
+                                                    className="w-20 h-20 rounded-full border-2 border-accent/40 object-cover"
+                                                />
+                                            ) : (
+                                                <div className="w-20 h-20 rounded-full bg-accent/20 border-2 border-accent/40 flex items-center justify-center text-2xl font-bold text-accent">
+                                                    {session?.user?.name?.[0] || "?"}
+                                                </div>
+                                            )}
                                             <div>
                                                 <Button variant="ghost" size="sm" className="mb-2">Change Avatar</Button>
                                                 <p className="text-[10px] text-text-tertiary uppercase font-bold tracking-widest">JPG, GIF or PNG. 1MB Max.</p>
                                             </div>
                                         </div>
 
-                                        <div className="grid grid-cols-2 gap-6">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                             <div className="space-y-2">
                                                 <label className="text-[10px] font-bold text-text-tertiary uppercase tracking-widest">Full Name</label>
-                                                <Input defaultValue="Rounak K." />
+                                                <Input
+                                                    value={name}
+                                                    onChange={(e) => setName(e.target.value)}
+                                                    placeholder="Your name"
+                                                />
                                             </div>
                                             <div className="space-y-2">
                                                 <label className="text-[10px] font-bold text-text-tertiary uppercase tracking-widest">Email Address</label>
-                                                <Input defaultValue="rounak@example.com" />
+                                                <Input
+                                                    value={email}
+                                                    onChange={(e) => setEmail(e.target.value)}
+                                                    placeholder="your@email.com"
+                                                    disabled
+                                                />
                                             </div>
                                         </div>
 
                                         <div className="space-y-2">
                                             <label className="text-[10px] font-bold text-text-tertiary uppercase tracking-widest">Professional Bio</label>
-                                            <textarea className="w-full bg-surface border border-border-default rounded-md p-4 text-sm h-24 focus:ring-accent" defaultValue="Freelance UI Engineer & SaaS Builder." />
+                                            <textarea
+                                                className="w-full bg-surface border border-border-default rounded-md p-4 text-sm h-24 focus:ring-accent outline-none focus:border-accent transition-all"
+                                                defaultValue="Freelance UI Engineer & SaaS Builder."
+                                            />
                                         </div>
 
                                         <div className="flex justify-end pt-4">
