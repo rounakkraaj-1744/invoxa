@@ -1,6 +1,7 @@
 import type { Request, Response } from 'express';
 import { invoicesService } from './invoices.service';
 import { InvoiceStatus } from '../../generated/prisma';
+import { pdfQueue } from '../../queues/pdf.queue';
 
 export const invoicesController = {
     async create(req: Request, res: Response) {
@@ -71,8 +72,12 @@ export const invoicesController = {
             return res.status(404).json({ message: 'Invoice not found' });
         }
 
-        // For now, return the current pdfUrl or a placeholder.
-        // PDF generation Worker will update this later.
-        res.json({ url: invoice.pdfUrl || `http://localhost:8080/api/v1/invoices/${id}/pdf` });
+        if (!invoice.pdfUrl) {
+            // Trigger generation if not exists
+            await pdfQueue.add('pdf-generation', { invoiceId: id });
+            return res.json({ message: 'PDF generation triggered. Please try again in 3-5 seconds.', url: null });
+        }
+
+        res.json({ url: invoice.pdfUrl });
     }
 };

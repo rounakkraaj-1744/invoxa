@@ -1,10 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <title>Invoice #{{invoice.number}}</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
         body {
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -60,11 +65,30 @@
             letter-spacing: 0.05em;
         }
 
-        .status-PAID     { background: #d1fae5; color: #065f46; }
-        .status-SENT     { background: #e0e7ff; color: #3730a3; }
-        .status-DRAFT    { background: #f4f4f5; color: #52525b; }
-        .status-OVERDUE  { background: #fee2e2; color: #991b1b; }
-        .status-CANCELLED{ background: #f4f4f5; color: #52525b; }
+        .status-PAID {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-SENT {
+            background: #e0e7ff;
+            color: #3730a3;
+        }
+
+        .status-DRAFT {
+            background: #f4f4f5;
+            color: #52525b;
+        }
+
+        .status-OVERDUE {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .status-CANCELLED {
+            background: #f4f4f5;
+            color: #52525b;
+        }
 
         /* ── Parties ── */
         .parties {
@@ -261,15 +285,16 @@
         }
     </style>
 </head>
+
 <body>
 
     <!-- Header -->
     <div class="header">
         <div class="logo">
             {{#if business.logoUrl}}
-                <img src="{{business.logoUrl}}" alt="{{business.name}}" />
+            <img src="{{business.logoUrl}}" alt="{{business.name}}" />
             {{else}}
-                <div class="logo-text">{{business.name}}</div>
+            <div class="logo-text">{{business.name}}</div>
             {{/if}}
         </div>
         <div class="invoice-meta">
@@ -339,7 +364,7 @@
                 <td>
                     <div class="item-description">{{this.description}}</div>
                     {{#if this.taxPercent}}
-                        <div class="item-tax">Tax: {{this.taxPercent}}%</div>
+                    <div class="item-tax">Tax: {{this.taxPercent}}%</div>
                     {{/if}}
                 </td>
                 <td class="align-right">{{this.quantity}}</td>
@@ -401,4 +426,5 @@
     </div>
 
 </body>
+
 </html>

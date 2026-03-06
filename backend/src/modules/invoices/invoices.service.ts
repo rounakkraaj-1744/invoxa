@@ -1,5 +1,6 @@
 import { prisma } from '../../config/db';
 import { InvoiceStatus, Prisma } from '../../generated/prisma';
+import { pdfQueue } from '../../queues/pdf.queue';
 
 export const generateInvoiceNumber = async (businessId: string) => {
     const business = await prisma.business.findUnique({
@@ -20,7 +21,7 @@ export const invoicesService = {
         const { items, ...invoiceData } = data;
         const number = await generateInvoiceNumber(businessId);
 
-        return prisma.invoice.create({
+        const invoice = await prisma.invoice.create({
             data: {
                 ...invoiceData,
                 businessId,
@@ -34,6 +35,11 @@ export const invoicesService = {
             },
             include: { items: true, client: true },
         });
+
+        // Queue PDF generation
+        await pdfQueue.add('pdf-generation', { invoiceId: invoice.id });
+
+        return invoice;
     },
 
     async list(businessId: string, filters: any = {}) {
