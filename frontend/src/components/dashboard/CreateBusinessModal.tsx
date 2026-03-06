@@ -43,9 +43,9 @@ export function CreateBusinessModal({
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-            <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" onClick={onClose} />
-            <div className="bg-surface border border-border-default rounded-2xl w-full max-w-md relative z-10 shadow-2xl animate-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-background/80 backdrop-blur-md" onClick={onClose} />
+            <div className="bg-surface border border-border-default rounded-2xl w-full max-w-md relative z-100 shadow-[0_0_50px_rgba(0,0,0,0.5)] animate-in zoom-in-95 duration-200">
                 <div className="p-6 border-b border-border-default flex items-center justify-between">
                     <div>
                         <h2 className="text-xl font-bold text-white tracking-tight">Create Business</h2>

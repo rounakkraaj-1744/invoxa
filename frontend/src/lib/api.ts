@@ -1,6 +1,6 @@
 import { authClient } from "./auth-client";
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BETTER_AUTH_URL || "http://localhost:8080";
+const BACKEND_URL = (process.env.NEXT_PUBLIC_BETTER_AUTH_URL || "http://localhost:8080").replace(/\/api\/auth$/, "");
 
 type RequestOptions = RequestInit & {
     params?: Record<string, string>;
@@ -34,8 +34,15 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
     }
 
     if (!response.ok) {
-        const error = await response.json().catch(() => ({ message: 'An unknown error occurred' }));
-        throw new Error(error.message || response.statusText);
+        let errorMessage = `Request failed with status ${response.status}`;
+        try {
+            const error = await response.json();
+            errorMessage = error.message || error.error || errorMessage;
+        } catch (e) {
+            // Fallback to response.statusText if json parsing fails
+            if (response.statusText) errorMessage = `${response.statusText} (${response.status})`;
+        }
+        throw new Error(errorMessage);
     }
 
     if (response.status === 204) {
