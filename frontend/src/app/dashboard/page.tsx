@@ -179,20 +179,20 @@ export default function DashboardHome() {
                         <Card className="bg-surface/20 border-border-default">
                             <CardContent className="p-6 space-y-6">
                                 <h2 className="text-sm font-bold text-text-tertiary uppercase tracking-widest">Quick Actions</h2>
-                                <div className="space-y-3">
-                                    <Link href="/dashboard/invoices/new" className="w-full">
-                                        <Button className="w-full bg-accent text-black hover:bg-accent/90 h-12 justify-center gap-2 font-bold shadow-glow-sm">
+                                <div className="flex flex-col gap-3">
+                                    <Button asChild className="w-full bg-accent text-black hover:bg-accent/90 h-12 justify-center gap-2 font-bold shadow-glow-sm">
+                                        <Link href="/dashboard/invoices/new">
                                             <Plus size={18} />
                                             <span>New Invoice</span>
-                                        </Button>
-                                    </Link>
-                                    <Link href="/dashboard/clients" className="w-full">
-                                        <Button variant="ghost" className="w-full h-12 justify-center gap-2 border-border-default text-text-secondary hover:text-white">
+                                        </Link>
+                                    </Button>
+                                    <Button asChild variant="ghost" className="w-full h-12 justify-center gap-2 text-text-secondary hover:text-white">
+                                        <Link href="/dashboard/clients">
                                             <UserPlus size={18} />
                                             <span>Add Client</span>
-                                        </Button>
-                                    </Link>
-                                    <Button variant="ghost" className="w-full h-12 justify-center gap-2 border-border-default text-text-secondary hover:text-white">
+                                        </Link>
+                                    </Button>
+                                    <Button variant="ghost" className="w-full h-12 justify-center gap-2 text-text-secondary hover:text-white">
                                         <FileUp size={18} />
                                         <span>Import CSV</span>
                                     </Button>
