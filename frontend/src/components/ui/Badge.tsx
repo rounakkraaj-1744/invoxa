@@ -12,6 +12,7 @@ const badgeVariants = cva(
                 draft: "border-border-active bg-surface text-text-tertiary",
                 overdue: "border-error/40 bg-error/10 text-error",
                 accent: "border-accent/40 bg-accent/10 text-accent",
+                cancelled: "border-border-active bg-surface text-text-tertiary opacity-50",
             },
         },
         defaultVariants: {

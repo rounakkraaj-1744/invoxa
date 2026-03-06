@@ -6,6 +6,7 @@ import { z } from "zod";
 import { Button } from "@/components/ui/Button";
 import { X } from "lucide-react";
 import { api } from "@/lib/api";
+import { useBusiness } from "@/context/BusinessContext";
 
 const clientSchema = z.object({
     name: z.string().min(1, "Name is required"),
@@ -26,13 +27,23 @@ export function CreateClientModal({
     onClose: () => void;
     onSuccess: () => void;
 }) {
+    const { activeBusiness } = useBusiness();
     const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm<ClientForm>({
         resolver: zodResolver(clientSchema),
     });
 
     const onSubmit = async (data: ClientForm) => {
+        if (!activeBusiness) {
+            console.error("No active business selected");
+            return;
+        }
+
         try {
-            await api.post("/v1/clients", data);
+            await api.post("/v1/clients", data, {
+                headers: {
+                    'x-business-id': activeBusiness.id
+                }
+            });
             reset();
             onSuccess();
             onClose();

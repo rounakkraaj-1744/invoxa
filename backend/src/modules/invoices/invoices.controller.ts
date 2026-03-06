@@ -73,6 +73,6 @@ export const invoicesController = {
 
         // For now, return the current pdfUrl or a placeholder.
         // PDF generation Worker will update this later.
-        res.json({ pdfUrl: invoice.pdfUrl || `http://localhost:8080/api/invoices/${id}/pdf` });
+        res.json({ url: invoice.pdfUrl || `http://localhost:8080/api/v1/invoices/${id}/pdf` });
     }
 };

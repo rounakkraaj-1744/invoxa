@@ -16,16 +16,27 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
     }
 
     // Get business ID from localStorage
-    const businessId = typeof window !== 'undefined' ? localStorage.getItem('active_business_id') : null;
+    let businessId = typeof window !== 'undefined' ? localStorage.getItem('active_business_id') : null;
+
+    // Safety check for weird storage values
+    if (businessId === "null" || businessId === "undefined") businessId = null;
 
     const headers = new Headers(init.headers || {});
-    if (businessId) {
+
+    // Only set if not already present (allows explicit override)
+    if (businessId && !headers.has('x-business-id')) {
         headers.set('x-business-id', businessId);
     }
 
     // Better Auth uses credentials (cookies)
     init.credentials = 'include';
     init.headers = headers;
+
+    if (process.env.NODE_ENV === 'development') {
+        if (!headers.has('x-business-id') && path !== '/v1/business' && !path.includes('/auth')) {
+            console.warn(`[API] Missing x-business-id for request: ${options.method || 'GET'} ${path}`);
+        }
+    }
 
     const response = await fetch(url.toString(), init);
 
@@ -34,13 +45,16 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
     }
 
     if (!response.ok) {
-        let errorMessage = `Request failed with status ${response.status}`;
+        let errorMessage = `Request failed: ${options.method || 'GET'} ${path} - Status ${response.status}`;
         try {
             const error = await response.json();
-            errorMessage = error.message || error.error || errorMessage;
+            errorMessage = error.error || error.message || errorMessage;
         } catch (e) {
-            // Fallback to response.statusText if json parsing fails
             if (response.statusText) errorMessage = `${response.statusText} (${response.status})`;
+        }
+
+        if (process.env.NODE_ENV === 'development') {
+            console.error(`[API ERROR]`, { path, status: response.status, message: errorMessage });
         }
         throw new Error(errorMessage);
     }
