@@ -31,6 +31,8 @@ export const metadata: Metadata = {
   description: "The modern invoicing platform for freelancers, teams, and developers.",
 };
 
+import { Providers } from "@/components/Providers";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -41,7 +43,9 @@ export default function RootLayout({
       <body
         className={`${dmSans.variable} ${instrumentSerif.variable} ${jetBrainsMono.variable} ${dmMono.variable} font-sans antialiased bg-background text-foreground`}
       >
-        {children}
+        <Providers>
+          {children}
+        </Providers>
       </body>
     </html>
   );

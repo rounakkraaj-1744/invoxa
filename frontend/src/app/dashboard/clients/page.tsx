@@ -10,74 +10,70 @@ import {
     Mail,
     Phone,
     MapPin,
-    MoreHorizontal
+    MoreHorizontal,
+    X
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const clients = [
-    {
-        name: "Acme Corp",
-        contact: "Alice Smith",
-        email: "alice@acme.com",
-        phone: "+1 (555) 123-4567",
-        address: "123 Tech Blvd, SF",
-        totalBilled: "$45,200",
-        status: "active" as const,
-        initials: "AC"
-    },
-    {
-        name: "Globex Inc",
-        contact: "Bob Jones",
-        email: "bob@globex.com",
-        phone: "+1 (555) 987-6543",
-        address: "456 Innovation Dr, NY",
-        totalBilled: "$12,500",
-        status: "active" as const,
-        initials: "GL"
-    },
-    {
-        name: "Soylent Corp",
-        contact: "Charlie Brown",
-        email: "charlie@soylent.com",
-        phone: "+1 (555) 456-7890",
-        address: "789 Future Way, TX",
-        totalBilled: "$8,900",
-        status: "inactive" as const,
-        initials: "SO"
-    },
-    {
-        name: "Initech",
-        contact: "Peter Gibbons",
-        email: "peter@initech.com",
-        phone: "+1 (555) 111-2222",
-        address: "101 Boring Ln, WA",
-        totalBilled: "$3,200",
-        status: "active" as const,
-        initials: "IN"
-    },
-    {
-        name: "Umbrella Corp",
-        contact: "Albert Wesker",
-        email: "albert@umbrella.com",
-        phone: "+1 (555) 666-7777",
-        address: "666 Raccoon City, CO",
-        totalBilled: "$150,000",
-        status: "active" as const,
-        initials: "UM"
-    },
-    {
-        name: "Stark Industries",
-        contact: "Tony Stark",
-        email: "tony@stark.com",
-        phone: "+1 (555) 999-8888",
-        address: "10880 Malibu Point, CA",
-        totalBilled: "$1,200,000",
-        status: "active" as const,
-        initials: "ST"
-    }
-];
+import { useState, useEffect } from "react";
+import { api } from "@/lib/api";
+import { useBusiness } from "@/context/BusinessContext";
+
+interface Client {
+    id: string;
+    name: string;
+    email: string;
+    phone?: string | null;
+    company?: string | null;
+    address?: string | null;
+    taxId?: string | null;
+}
+
+import { CreateClientModal } from "@/components/dashboard/CreateClientModal";
 
 export default function ClientsPage() {
+    const { activeBusiness } = useBusiness();
+    const [clients, setClients] = useState<Client[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+    const fetchClients = async () => {
+        if (!activeBusiness) return;
+        setIsLoading(true);
+        try {
+            const data = await api.get<Client[]>("/v1/clients", {
+                params: searchQuery ? { search: searchQuery } : undefined
+            });
+            setClients(data);
+        } catch (error) {
+            console.error("Failed to fetch clients:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleDeleteClient = async (id: string) => {
+        if (!confirm("Are you sure you want to delete this client?")) return;
+        try {
+            await api.delete(`/v1/clients/${id}`);
+            fetchClients();
+        } catch (error) {
+            console.error("Failed to delete client:", error);
+        }
+    };
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            fetchClients();
+        }, 300); // Debounce search
+        return () => clearTimeout(timer);
+    }, [activeBusiness, searchQuery]);
+
+    const getInitials = (name: string) => {
+        return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+    };
+
     return (
         <div className="flex flex-col min-h-screen bg-background">
             <DashboardHeader title="Clients" />
@@ -88,11 +84,21 @@ export default function ClientsPage() {
                         <h1 className="text-3xl font-bold tracking-tight text-white mb-1">Clients</h1>
                         <p className="text-sm text-text-tertiary">Manage your client relationships.</p>
                     </div>
-                    <Button className="bg-accent text-black hover:bg-accent/90 gap-2 h-11 px-6 shadow-glow font-bold text-xs uppercase tracking-widest">
+                    <Button
+                        disabled={!activeBusiness}
+                        onClick={() => setIsCreateModalOpen(true)}
+                        className="bg-accent text-black hover:bg-accent/90 gap-2 h-11 px-6 shadow-glow font-bold text-xs uppercase tracking-widest"
+                    >
                         <Plus size={18} />
                         <span>Add Client</span>
                     </Button>
                 </div>
+
+                <CreateClientModal
+                    isOpen={isCreateModalOpen}
+                    onClose={() => setIsCreateModalOpen(false)}
+                    onSuccess={fetchClients}
+                />
 
                 {/* Search Bar Area */}
                 <div className="bg-surface/30 border border-border-default rounded-xl p-4">
@@ -100,64 +106,94 @@ export default function ClientsPage() {
                         <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-tertiary" />
                         <input
                             placeholder="Search clients..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
                             className="w-full bg-background border border-border-default/50 rounded-lg pl-10 pr-4 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition-all"
                         />
                     </div>
                 </div>
 
                 {/* Clients Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {clients.map((client, i) => (
-                        <Card key={i} className="bg-surface/30 border-border-default hover:border-border-active transition-all group">
-                            <CardContent className="p-6">
-                                <div className="flex justify-between items-start mb-6">
-                                    <div className="flex items-center gap-4">
-                                        <div className={cn(
-                                            "w-12 h-12 rounded-lg flex items-center justify-center text-sm font-bold border-2",
-                                            i % 3 === 0 ? "bg-accent/10 border-accent/20 text-accent" :
-                                                i % 3 === 1 ? "bg-info/10 border-info/20 text-info" :
-                                                    "bg-success/10 border-success/20 text-success"
-                                        )}>
-                                            {client.initials}
+                {!activeBusiness ? (
+                    <Card className="bg-surface/30 border-border-default p-12 text-center">
+                        <p className="text-text-tertiary">Please select or create a business to view clients.</p>
+                    </Card>
+                ) : isLoading ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-pulse">
+                        {[1, 2, 3].map(i => (
+                            <div key={i} className="h-48 bg-surface/20 rounded-xl border border-border-default" />
+                        ))}
+                    </div>
+                ) : clients.length === 0 ? (
+                    <Card className="bg-surface/30 border-border-default p-12 text-center">
+                        <p className="text-text-tertiary">No clients found. Click "Add Client" to get started.</p>
+                    </Card>
+                ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {clients.map((client, i) => (
+                            <Card key={client.id} className="bg-surface/30 border-border-default hover:border-border-active transition-all group">
+                                <CardContent className="p-6">
+                                    <div className="flex justify-between items-start mb-6">
+                                        <div className="flex items-center gap-4">
+                                            <div className={cn(
+                                                "w-12 h-12 rounded-lg flex items-center justify-center text-sm font-bold border-2",
+                                                i % 3 === 0 ? "bg-accent/10 border-accent/20 text-accent" :
+                                                    i % 3 === 1 ? "bg-info/10 border-info/20 text-info" :
+                                                        "bg-success/10 border-success/20 text-success"
+                                            )}>
+                                                {getInitials(client.name)}
+                                            </div>
+                                            <div>
+                                                <h3 className="font-bold text-white text-lg leading-tight uppercase tracking-tight">{client.name}</h3>
+                                                <p className="text-[10px] font-bold text-text-tertiary uppercase tracking-widest leading-none mt-1">
+                                                    {client.company || "Individual"}
+                                                </p>
+                                            </div>
                                         </div>
+                                        <div className="flex items-center gap-1">
+                                            <button
+                                                onClick={() => handleDeleteClient(client.id)}
+                                                className="p-2 text-text-tertiary hover:text-error transition-colors"
+                                            >
+                                                <X size={16} />
+                                            </button>
+                                            <button className="p-2 text-text-tertiary hover:text-white transition-colors">
+                                                <MoreHorizontal size={18} />
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-3 mb-8">
+                                        <div className="flex items-center gap-3 text-sm">
+                                            <Mail size={14} className="text-text-tertiary shrink-0" />
+                                            <span className="text-text-secondary truncate">{client.email}</span>
+                                        </div>
+                                        {client.phone && (
+                                            <div className="flex items-center gap-3 text-sm">
+                                                <Phone size={14} className="text-text-tertiary shrink-0" />
+                                                <span className="text-text-secondary">{client.phone}</span>
+                                            </div>
+                                        )}
+                                        {client.address && (
+                                            <div className="flex items-center gap-3 text-sm">
+                                                <MapPin size={14} className="text-text-tertiary shrink-0" />
+                                                <span className="text-text-secondary text-xs truncate">{client.address}</span>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div className="flex items-end justify-between pt-4 border-t border-border-default/50">
                                         <div>
-                                            <h3 className="font-bold text-white text-lg leading-tight">{client.name}</h3>
-                                            <p className="text-xs text-text-tertiary">{client.contact}</p>
+                                            <p className="text-[10px] font-bold text-text-tertiary uppercase tracking-widest mb-1">Account Holder</p>
+                                            <p className="text-sm font-bold text-white truncate max-w-[150px]">{client.name}</p>
                                         </div>
+                                        <Badge variant="paid" className="px-3 py-1">Active</Badge>
                                     </div>
-                                    <button className="p-2 text-text-tertiary hover:text-white transition-colors">
-                                        <MoreHorizontal size={18} />
-                                    </button>
-                                </div>
-
-                                <div className="space-y-3 mb-8">
-                                    <div className="flex items-center gap-3 text-sm">
-                                        <Mail size={14} className="text-text-tertiary shrink-0" />
-                                        <span className="text-text-secondary truncate">{client.email}</span>
-                                    </div>
-                                    <div className="flex items-center gap-3 text-sm">
-                                        <Phone size={14} className="text-text-tertiary shrink-0" />
-                                        <span className="text-text-secondary">{client.phone}</span>
-                                    </div>
-                                    <div className="flex items-center gap-3 text-sm">
-                                        <MapPin size={14} className="text-text-tertiary shrink-0" />
-                                        <span className="text-text-secondary text-xs truncate">{client.address}</span>
-                                    </div>
-                                </div>
-
-                                <div className="flex items-end justify-between pt-4 border-t border-border-default/50">
-                                    <div>
-                                        <p className="text-[10px] font-bold text-text-tertiary uppercase tracking-widest mb-1">Total Billed</p>
-                                        <p className="text-xl font-bold font-mono text-white tracking-tighter">{client.totalBilled}</p>
-                                    </div>
-                                    <Badge variant={client.status === 'active' ? 'paid' : 'draft'} className="px-3 py-1">
-                                        {client.status === 'active' ? 'Active' : 'Inactive'}
-                                    </Badge>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    ))}
-                </div>
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </div>
+                )}
             </main>
         </div>
     );

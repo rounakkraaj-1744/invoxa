@@ -30,6 +30,8 @@ const navItems = [
     { name: "Settings", icon: Settings, href: "/dashboard/settings" },
 ];
 
+import { BusinessSwitcher } from "./BusinessSwitcher";
+
 export function Sidebar() {
     const pathname = usePathname();
     const [isCollapsed, setIsCollapsed] = useState(false);
@@ -38,25 +40,25 @@ export function Sidebar() {
         <aside
             className={cn(
                 "h-screen bg-surface border-r border-border-default transition-all duration-300 flex flex-col sticky top-0",
-                isCollapsed ? "w-[80px]" : "w-[220px]"
+                isCollapsed ? "w-[80px]" : "w-[240px]"
             )}
         >
-            <div className="p-6 flex items-center justify-between mb-4">
+            <div className="p-4 flex items-center justify-between mb-2">
                 {!isCollapsed && (
                     <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 bg-accent rounded-sm rotate-45 flex items-center justify-center">
-                            <div className="w-3 h-3 bg-background rounded-sm -rotate-45" />
-                        </div>
-                        <span className="text-lg font-bold tracking-tight text-foreground">Invoxa</span>
+                        <div className="w-8 h-8 bg-accent rounded-lg flex items-center justify-center text-background font-black text-xl">I</div>
+                        <span className="text-xl font-bold tracking-tight text-white">Invoxa</span>
                     </div>
                 )}
                 <button
                     onClick={() => setIsCollapsed(!isCollapsed)}
-                    className="p-1 hover:bg-elevated rounded-md border border-border-default text-text-secondary hover:text-foreground transition-all"
+                    className="p-1.5 hover:bg-elevated rounded-md border border-border-default text-text-tertiary hover:text-white transition-all ml-auto"
                 >
                     {isCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
                 </button>
             </div>
+
+            <BusinessSwitcher isCollapsed={isCollapsed} />
 
             <div className="flex-1 px-3 space-y-1">
                 {navItems.map((item) => {

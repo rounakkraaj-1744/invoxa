@@ -26,7 +26,7 @@ app.use(morgan('dev'))
 app.use(express.json())
 
 // Routes
-app.use('/auth', authRoutes)
+app.use('/api/auth', authRoutes)
 app.use('/v1/invoices', invoiceRoutes)
 app.use('/v1/clients', clientRoutes)
 app.use('/v1/payments', paymentRoutes)

@@ -38,7 +38,11 @@ const tiers = [
     },
 ];
 
+import { useRouter } from "next/navigation";
+
 export function Pricing() {
+    const router = useRouter();
+
     return (
         <section id="pricing" className="py-24 bg-surface/10">
             <div className="container px-6 mx-auto">
@@ -79,7 +83,11 @@ export function Pricing() {
                                 ))}
                             </div>
 
-                            <Button variant={tier.buttonVariant} className="w-full">
+                            <Button
+                                variant={tier.buttonVariant}
+                                className="w-full"
+                                onClick={() => router.push("/signup")}
+                            >
                                 {tier.buttonText}
                             </Button>
                         </div>

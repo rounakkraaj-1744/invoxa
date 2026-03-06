@@ -4,9 +4,11 @@ import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export function Navbar() {
     const [isScrolled, setIsScrolled] = useState(false);
+    const router = useRouter();
 
     useEffect(() => {
         const handleScroll = () => {
@@ -46,10 +48,12 @@ export function Navbar() {
                 </div>
 
                 <div className="flex items-center gap-4">
-                    <Button variant="ghost" size="sm" className="hidden sm:inline-flex">
+                    <Button variant="ghost" size="sm" className="hidden sm:inline-flex" onClick={() => router.push("/login")}>
                         Sign In
                     </Button>
-                    <Button size="sm">Start Free</Button>
+                    <Button size="sm" onClick={() => router.push("/signup")}>
+                        Start Free
+                    </Button>
                 </div>
             </div>
         </nav>

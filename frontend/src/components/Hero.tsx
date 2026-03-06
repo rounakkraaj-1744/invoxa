@@ -6,7 +6,11 @@ import { Star, ArrowRight, CheckCircle2, Send, Clock } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { cn } from "@/lib/utils";
 
+import { useRouter } from "next/navigation";
+
 export const Hero = () => {
+    const router = useRouter();
+
     return (
         <section className="relative pt-32 pb-24 overflow-hidden flex flex-col items-center text-center px-4">
             {/* Background Effects */}
@@ -49,7 +53,10 @@ export const Hero = () => {
                 transition={{ duration: 0.5, delay: 0.2 }}
                 className="flex flex-wrap items-center justify-center gap-4 mb-12"
             >
-                <Button className="h-14 px-8 text-base bg-accent text-black hover:bg-accent/90 gap-2 shadow-glow font-bold">
+                <Button
+                    onClick={() => router.push("/signup")}
+                    className="h-14 px-8 text-base bg-accent text-black hover:bg-accent/90 gap-2 shadow-glow font-bold"
+                >
                     Start for free <ArrowRight size={18} />
                 </Button>
                 <Button variant="ghost" className="h-14 px-8 text-base border-border-default hover:bg-surface font-medium">
