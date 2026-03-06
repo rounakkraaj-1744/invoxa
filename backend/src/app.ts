@@ -5,7 +5,6 @@ import morgan from 'morgan'
 import { errorMiddleware } from './middleware/error.middleware'
 
 // Route imports
-import authRoutes from './modules/auth/auth.routes'
 import invoiceRoutes from './modules/invoices/invoices.routes'
 import clientRoutes from './modules/clients/clients.routes'
 import paymentRoutes from './modules/payments/payments.routes'
@@ -14,19 +13,24 @@ import analyticsRoutes from './modules/analytics/analytics.routes'
 import businessRoutes from './modules/business/business.routes'
 import webhookRoutes from './modules/webhooks/webhooks.routes'
 
+import { auth } from './lib/auth'
+import { toNodeHandler } from 'better-auth/node'
+
 const app = express()
 
 // Middleware
-app.use(helmet())
 app.use(cors({
     origin: process.env.FRONTEND_URL || 'http://localhost:3000',
     credentials: true
 }))
 app.use(morgan('dev'))
-app.use(express.json())
 
-// Routes
-app.use('/api/auth', authRoutes)
+// Better Auth handler — MUST come before express.json() and helmet()
+// so it can read the raw body and set its own headers
+app.all('/api/auth/*splat', toNodeHandler(auth))
+
+app.use(helmet())
+app.use(express.json())
 app.use('/v1/invoices', invoiceRoutes)
 app.use('/v1/clients', clientRoutes)
 app.use('/v1/payments', paymentRoutes)
